@@ -1,22 +1,14 @@
 import { useMemo } from "preact/hooks";
+
+import { BoardCard, EmptyBoardCard } from "./components/board-card";
 import styles from "./styles.module.scss";
 
 export const BoardList = () => {
     const fakeList = useMemo(() =>
         Array.from({ length: 10 }).map((_, i) =>
-            <figure key={i}>
-                <figcaption>Bare Fists</figcaption>
-                <div>
-                    <p>Unarmed.</p>
-                    <hr />
-                    <p>Attack: 0 - 0</p>
-                    <p>Combo: Lt 0 Hv 0</p>
-                    <ul>
-                        <li>-</li>
-                        <li>-</li>
-                    </ul>
-                </div>
-            </figure>), []);
+            <BoardCard
+                key={i}
+                title="Board Name" />), []);
     return (
         <div class={styles.root}>
             <div class={styles.container}>
@@ -25,36 +17,17 @@ export const BoardList = () => {
                 </header>
                 <main class={styles.main}>
                     <section>
-                        <figure>
-                            <figcaption>
-                                Board Name
-                            </figcaption>
-                            <div class={styles.boardCardContent}>
-                                <aside class={styles.imagePlaceholder} />
-                                <div>
-                                    <p>Unarmed.</p>
-                                    <hr />
-                                    <p>Attack: 0 - 0</p>
-                                    <p>Combo: Lt 0 Hv 0</p>
-                                    <ul>
-                                        <li>-</li>
-                                        <li>-</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </figure>
+                        <EmptyBoardCard />
                         {fakeList}
                     </section>
                 </main>
                 <nav>
                     <div>List of Kanban Boards</div>
-                    <div><kbd>A</kbd> Move</div>
-                    <div><kbd>S</kbd> Rotate</div>
-                    <div><kbd>D</kbd> Reset Position</div>
-                    <div><kbd>Page Up</kbd> Zoom In</div>
-                    <div><kbd>Page Down</kbd> Zoom Out</div>
-                    <div><kbd>Enter</kbd> Place Marker</div>
-                    <div><kbd>Ecs</kbd> Back</div>
+                    <div>
+                        <button type="button" >
+                            Create New Board
+                        </button>
+                    </div>
                 </nav>
             </div>
         </div>
