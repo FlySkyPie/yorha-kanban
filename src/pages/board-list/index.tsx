@@ -16,9 +16,9 @@ export const BoardList = () => {
         if (result.type === 'close') {
             return;
         }
+
         const { name, code, description } = result.value;
         board.add(name, code, description);
-        console.log(result)
     }, [board, openDialog]);
 
     const cardsView = useMemo(() => {
@@ -28,10 +28,12 @@ export const BoardList = () => {
                     onClick={onCreateBoard} />
             );
         }
-        return board.list.map(({ id, name }) =>
+        return board.list.map(({ id, name, code, description }) =>
             <BoardCard
                 key={id}
-                title={name} />
+                title={`${name} (${code})`} >
+                {description}
+            </BoardCard>
         )
     }, [board.list, onCreateBoard]);
 

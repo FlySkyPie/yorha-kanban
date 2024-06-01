@@ -45,12 +45,14 @@ export const useCreateBoardDialog = () => {
     const dialogView = useMemo(() => {
         return (
             <dialog ref={setElement} class={styles.styledModal}>
-                <Content
-                    onSubmit={handleSubmit}
-                    onClose={handleClose} />
+                {session &&
+                    <Content
+                        key={session.sessionId}
+                        onSubmit={handleSubmit}
+                        onClose={handleClose} />}
             </dialog>
         );
-    }, [handleClose, handleSubmit]);
+    }, [handleClose, handleSubmit, session]);
 
     return { openDialog, dialogView };
 };

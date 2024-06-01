@@ -1,3 +1,4 @@
+import { StrictMode } from "preact/compat";
 import clsx from "clsx";
 import { RouterProvider, } from "react-router-dom";
 
@@ -8,8 +9,10 @@ import styles from "./styles.module.scss";
 
 export function App() {
   return (
-    <div class={clsx(styles.root, yorha.yorha, yorha.background)}>
-      <RouterProvider router={router} />
-    </div>
+    <StrictMode>
+      <div class={clsx(styles.root, yorha.yorha, yorha.background)}>
+        <RouterProvider router={router} />
+      </div>
+    </StrictMode>
   );
 }
