@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "preact/hooks";
 
 import { useBoardStore } from "../../storages/board.storage";
-import { useCreateBoardDialog } from "../../dialogs/use-create-board.dialog";
+import { useCreateOrUpdateBoardDialog } from "../../dialogs/use-create-or-update-board.dialog";
 
 import { BoardCard, EmptyBoardCard } from "./components/board-card";
 import styles from "./styles.module.scss";
@@ -9,7 +9,7 @@ import styles from "./styles.module.scss";
 export const BoardList = () => {
     const board = useBoardStore();
 
-    const { dialogView, openDialog } = useCreateBoardDialog();
+    const { dialogView, openDialog } = useCreateOrUpdateBoardDialog();
 
     const onCreateBoard = useCallback(async () => {
         const result = await openDialog();
@@ -28,14 +28,21 @@ export const BoardList = () => {
                     onClick={onCreateBoard} />
             );
         }
-        return board.list.map(({ id, name, code, description }) =>
+        return board.list.map((value) =>
             <BoardCard
-                key={id}
-                title={`${name} (${code})`} >
-                {description}
-            </BoardCard>
+                key={value.id}
+                value={value}
+                onEdit={async () => {
+                    const result = await openDialog(value);
+                    if (result.type === 'close') {
+                        return;
+                    }
+
+                    const { name, code, description } = result.value;
+                    await board.update(value.id, name, code, description)
+                }} />
         )
-    }, [board.list, onCreateBoard]);
+    }, [board, onCreateBoard, openDialog]);
 
     return (
         <div class={styles.root}>

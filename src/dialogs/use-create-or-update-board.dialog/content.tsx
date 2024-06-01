@@ -1,21 +1,30 @@
-import React, { useState } from "preact/compat";
+import React, { useMemo, useState } from "preact/compat";
 
 import type { IBoard } from "../../interfaces/boards";
 
 import styles from './styles.module.scss';
 
 type IProps = {
+    prevValue?: Omit<IBoard, "id">;
+
     onSubmit: (value: Omit<IBoard, 'id'>) => void;
     onClose: () => void;
 };
 
-export const Content: React.FC<IProps> = ({ onSubmit, onClose }) => {
+export const Content: React.FC<IProps> = ({ prevValue, onSubmit, onClose }) => {
     const [values, setValues] = useState<Omit<IBoard, 'id'>>(() =>
-        ({ code: "", description: "", name: "" }));
+        prevValue ?? ({ code: "", description: "", name: "" }));
+
+    const title = useMemo(() => {
+        if (prevValue) {
+            return "Edit Board";
+        }
+        return "Create New Board";
+    }, [prevValue]);
 
     return (
         <figure>
-            <figcaption>Create New Board</figcaption>
+            <figcaption>{title}</figcaption>
             <div class={styles.conent}>
                 <p>
                     <label>Name</label>
@@ -49,7 +58,9 @@ export const Content: React.FC<IProps> = ({ onSubmit, onClose }) => {
                         Cancel
                     </button>
                     <button class="button primary" onClick={() => onSubmit(values)}>
-                        Create
+                        {prevValue ?
+                            "Update" :
+                            "Create"}
                     </button>
                 </p>
             </div>

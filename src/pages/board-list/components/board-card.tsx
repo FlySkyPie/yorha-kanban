@@ -1,4 +1,6 @@
-import React from "preact/compat";
+import React, { } from "preact/compat";
+
+import type { IBoard } from "../../../interfaces/boards";
 
 import styles from "./styles.module.scss";
 
@@ -30,23 +32,22 @@ export const EmptyBoardCard: React.FC<IProps> = ({ onClick }) => {
 }
 
 type IBoardCardProps = {
-    title: string;
-    children?: React.ReactNode;
+    value: IBoard;
 
     onEdit?: () => void;
     onView?: () => void;
 };
 
-export const BoardCard: React.FC<IBoardCardProps> = ({ title, children, onEdit, onView }) => {
+export const BoardCard: React.FC<IBoardCardProps> = ({ value, onEdit, onView }) => {
     return (
         <figure >
             <figcaption>
-                {title}
+                {`${value.name} (${value.code})`}
             </figcaption>
             <div class={styles.boardCardContent}>
                 <aside class={styles.imagePlaceholder} />
                 <div class={styles.content}>
-                    {children ?? <p>No description.</p>}
+                    {value.description ?? <p>No description.</p>}
                     <p class={styles.actions}>
                         <button type="button" onClick={onEdit}>
                             Edit

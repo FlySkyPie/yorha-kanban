@@ -14,5 +14,17 @@ export const useBoardStore = () => {
         });
     }, []);
 
-    return { list, add };
+    const update = useCallback(async (
+        id: number,
+        name: string,
+        code: string,
+        description: string) => {
+        await db.boards.update(id, {
+            name,
+            code,
+            description,
+        });
+    }, []);
+
+    return { list, add, update };
 };

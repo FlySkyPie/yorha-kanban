@@ -10,10 +10,11 @@ type IResult = { type: 'done', value: Omit<IBoard, 'id'> } | { type: 'close' };
 
 type IDialogSession = {
     sessionId: string;
+    prevValue?: Omit<IBoard, "id">;
     resolve: (value: IResult) => void;
 }
 
-export const useCreateBoardDialog = () => {
+export const useCreateOrUpdateBoardDialog = () => {
     const [session, setSession] = useState<IDialogSession>();
     const [element, setElement] = useState<HTMLDialogElement | null>(null);
 
@@ -33,13 +34,13 @@ export const useCreateBoardDialog = () => {
         element.close();
     }, [element, session]);
 
-    const openDialog = useCallback(() => new Promise<IResult>((resolve, reject) => {
+    const openDialog = useCallback((prevValue?: Omit<IBoard, 'id'>) => new Promise<IResult>((resolve, reject) => {
         if (!element) {
             reject("No HTMLDialogElement found");
             return;
         }
         element.showModal();
-        setSession({ resolve, sessionId: nanoid() });
+        setSession({ resolve, prevValue, sessionId: nanoid() });
     }), [element]);
 
     const dialogView = useMemo(() => {
@@ -48,6 +49,7 @@ export const useCreateBoardDialog = () => {
                 {session &&
                     <Content
                         key={session.sessionId}
+                        prevValue={session.prevValue}
                         onSubmit={handleSubmit}
                         onClose={handleClose} />}
             </dialog>
