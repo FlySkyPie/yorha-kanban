@@ -12,12 +12,20 @@ export const Content: React.FC<IProps> = ({ onClose }) => {
             <figcaption>Create New Board</figcaption>
             <div class={styles.conent}>
                 <p>
-                    <label >Title</label>
+                    <label >Name</label>
                     <input
                         style="width:100%;box-sizing: border-box;"
                         type="text"
                     />
                 </p>
+                <p>
+                    <label >Code</label>
+                    <input
+                        style="width:100%;box-sizing: border-box;"
+                        type="text"
+                    />
+                </p>
+
 
                 <p>
                     <label >Description</label>
@@ -26,8 +34,10 @@ export const Content: React.FC<IProps> = ({ onClose }) => {
                         rows={8}
                     ></textarea>
                 </p>
-
-                <button class="button primary" onClick={onClose}>Create</button>
+                <p class={styles.actions}>
+                    <button class="button primary" onClick={onClose}>Cancel</button>
+                    <button class="button primary" onClick={onClose}>Create</button>
+                </p>
             </div>
         </figure>
 
