@@ -1,22 +1,39 @@
 import { useCallback, useMemo } from "preact/hooks";
 
+import { useBoardStore } from "../../storages/board.storage";
 import { useCreateBoardDialog } from "../../dialogs/use-create-board.dialog";
 
 import { BoardCard, EmptyBoardCard } from "./components/board-card";
 import styles from "./styles.module.scss";
 
 export const BoardList = () => {
+    const board = useBoardStore();
+
     const { dialogView, openDialog } = useCreateBoardDialog();
-    const fakeList = useMemo(() =>
-        Array.from({ length: 10 }).map((_, i) =>
-            <BoardCard
-                key={i}
-                title="Board Name" />), []);
 
     const onCreateBoard = useCallback(async () => {
         const result = await openDialog();
+        if (result.type === 'close') {
+            return;
+        }
+        const { name, code, description } = result.value;
+        board.add(name, code, description);
         console.log(result)
-    }, [openDialog]);
+    }, [board, openDialog]);
+
+    const cardsView = useMemo(() => {
+        if (!board.list || board.list.length === 0) {
+            return (
+                <EmptyBoardCard
+                    onClick={onCreateBoard} />
+            );
+        }
+        return board.list.map(({ id, name }) =>
+            <BoardCard
+                key={id}
+                title={name} />
+        )
+    }, [board.list, onCreateBoard]);
 
     return (
         <div class={styles.root}>
@@ -26,9 +43,7 @@ export const BoardList = () => {
                 </header>
                 <main class={styles.main}>
                     <section>
-                        <EmptyBoardCard
-                            onClick={onCreateBoard} />
-                        {fakeList}
+                        {cardsView}
                     </section>
                 </main>
                 <nav>

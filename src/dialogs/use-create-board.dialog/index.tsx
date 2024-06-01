@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from 'preact/hooks';
 import { nanoid } from 'nanoid';
 
+import type { IBoard } from '../../interfaces/boards';
+
 import { Content } from './content';
 import styles from './styles.module.scss';
 
-type IResult = { type: 'done' } | { type: 'close' };
+type IResult = { type: 'done', value: Omit<IBoard, 'id'> } | { type: 'close' };
 
 type IDialogSession = {
     sessionId: string;
@@ -23,7 +25,15 @@ export const useCreateBoardDialog = () => {
         element.close();
     }, [element, session]);
 
-    const openDialog = useCallback(() => new Promise((resolve, reject) => {
+    const handleSubmit = useCallback((value: Omit<IBoard, 'id'>) => {
+        if (!session || !element) {
+            return;
+        }
+        session.resolve({ type: 'done', value });
+        element.close();
+    }, [element, session]);
+
+    const openDialog = useCallback(() => new Promise<IResult>((resolve, reject) => {
         if (!element) {
             reject("No HTMLDialogElement found");
             return;
@@ -35,10 +45,12 @@ export const useCreateBoardDialog = () => {
     const dialogView = useMemo(() => {
         return (
             <dialog ref={setElement} class={styles.styledModal}>
-                <Content onClose={handleClose} />
+                <Content
+                    onSubmit={handleSubmit}
+                    onClose={handleClose} />
             </dialog>
         );
-    }, [handleClose]);
+    }, [handleClose, handleSubmit]);
 
     return { openDialog, dialogView };
 };
