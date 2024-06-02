@@ -1,11 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useMemo } from "preact/hooks";
 
 import { CreateListColumn, ListColumn } from "./components/list-column";
 import { useCreateListDialog } from "../../dialogs/use-create-list.dialog";
 import { useListStore } from "../../storages/list.storage";
 import { useBoard } from "../../storages/board.storage";
+import { useEditListDialog } from "../../dialogs/use-edit-list.dialog";
 import styles from './styles.module.scss';
-import { useMemo } from "preact/hooks";
 
 export const Board: React.FC = () => {
     const { boardCode } = useParams();
@@ -13,6 +14,7 @@ export const Board: React.FC = () => {
     const list = useListStore(board?.id ?? -1);
     const navigate = useNavigate();
     const { dialogView, openDialog } = useCreateListDialog();
+    const { dialogView: editDialogView, openDialog: openEditDialog } = useEditListDialog();
 
     const listColumns = useMemo(() => {
         if (!list.list) {
@@ -23,9 +25,19 @@ export const Board: React.FC = () => {
             <ListColumn
                 key={value.id}
                 name={value.name}
+                onEdit={async () => {
+                    const result = await openEditDialog(value.name);
+                    if (result.type === 'close') {
+                        return;
+                    }
+                    if (result.type === 'delete') {
+                        return;
+                    }
+                    await list.update(value.id, result.value);
+                }}
             />
         )
-    }, [list.list]);
+    }, [list, openEditDialog]);
 
     return (
         <div class={styles.root}>
@@ -36,18 +48,19 @@ export const Board: React.FC = () => {
                 <main class={styles.main}>
                     <section class={styles.section}>
                         {listColumns}
-                        <CreateListColumn onCreate={async () => {
-                            if (!board) {
-                                return;
-                            }
-                            const result = await openDialog();
-                            if (result.type === 'close') {
-                                return;
-                            }
+                        <CreateListColumn
+                            onCreate={async () => {
+                                if (!board) {
+                                    return;
+                                }
+                                const result = await openDialog();
+                                if (result.type === 'close') {
+                                    return;
+                                }
 
-                            await list.add(result.value, board.id);
+                                await list.add(result.value, board.id);
 
-                        }} />
+                            }} />
                     </section>
                 </main>
                 <nav>
@@ -63,6 +76,7 @@ export const Board: React.FC = () => {
                 </nav>
             </div>
             {dialogView}
+            {editDialogView}
         </div>
     );
 };

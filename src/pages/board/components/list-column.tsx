@@ -23,10 +23,12 @@ export const CreateListColumn: React.FC<ICreateListColumnProps> = ({ onCreate })
 };
 
 type IProps = {
-    name: string
+    name: string;
+
+    onEdit: () => void;
 };
 
-export const ListColumn: React.FC<IProps> = ({ name }) => {
+export const ListColumn: React.FC<IProps> = ({ name, onEdit }) => {
 
     return (
         <figure class={styles.root}>
@@ -39,7 +41,9 @@ export const ListColumn: React.FC<IProps> = ({ name }) => {
                         <button type="button" >
                             Add a card
                         </button>
-                        <button type="button" >
+                        <button
+                            type="button"
+                            onClick={onEdit}>
                             Edit list
                         </button>
                     </p>
