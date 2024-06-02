@@ -31,6 +31,7 @@ export const Board: React.FC = () => {
                         return;
                     }
                     if (result.type === 'delete') {
+                        list.remove(value.id);
                         return;
                     }
                     await list.update(value.id, result.value);

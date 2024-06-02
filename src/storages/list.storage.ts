@@ -7,6 +7,7 @@ export const useListStore = (boardId: number) => {
     const list = useLiveQuery(() =>
         db.lists.where("boardId").equals(boardId).toArray(),
         [boardId]);
+
     const add = useCallback(async (name: string, boardId: number) => {
         await db.lists.add({
             id: undefined!,
@@ -25,5 +26,9 @@ export const useListStore = (boardId: number) => {
         });
     }, []);
 
-    return { list, add, update };
+    const remove = useCallback(async (id: number,) => {
+        await db.lists.delete(id);
+    }, []);
+
+    return { list, add, update, remove };
 };

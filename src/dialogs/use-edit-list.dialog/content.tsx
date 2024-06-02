@@ -1,6 +1,7 @@
 import React, { useState } from "preact/compat";
 
 import styles from './styles.module.scss';
+import { useConfirmDialog } from "../use-confirm.dialog";
 
 type IProps = {
     prevName: string
@@ -11,6 +12,7 @@ type IProps = {
 };
 
 export const Content: React.FC<IProps> = ({ prevName, onSubmit, onDelete, onClose }) => {
+    const { dialogView, openDialog } = useConfirmDialog();
     const [name, setName] = useState(() => prevName);
 
     return (
@@ -29,7 +31,18 @@ export const Content: React.FC<IProps> = ({ prevName, onSubmit, onDelete, onClos
                     />
                 </p>
                 <p class={styles.actions}>
-                    <button class="button primary" onClick={onDelete}>
+                    <button
+                        class="button primary"
+                        onClick={async () => {
+                            const result = await openDialog(
+                                "Warning",
+                                "Are you sure going delete the list?",
+                                "Delete");
+                            if (result.type === 'close') {
+                                return;
+                            }
+                            onDelete();
+                        }}>
                         Delete
                     </button>
                 </p>
@@ -42,7 +55,7 @@ export const Content: React.FC<IProps> = ({ prevName, onSubmit, onDelete, onClos
                     </button>
                 </p>
             </div>
+            {dialogView}
         </figure>
-
     );
 };
