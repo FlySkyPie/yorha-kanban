@@ -1,0 +1,36 @@
+.root {
+    width : 100%;
+    height: 100%;
+
+    display        : flex;
+    flex-direction : column;
+    justify-content: center;
+    align-items    : center;
+
+    padding   : 0 2rem 2rem 2rem;
+    box-sizing: border-box;
+}
+
+.container {
+    width : 100%;
+    height: 100%;
+
+    display        : flex;
+    flex-direction : column;
+    justify-content: space-between;
+    gap            : 1rem;
+}
+
+.main {
+    flex-grow: 1;
+
+    overflow-x: auto;
+}
+
+.section {
+    height: 100%;
+
+    display       : flex;
+    flex-direction: row;
+    gap           : 1rem;
+}

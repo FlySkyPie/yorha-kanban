@@ -1,0 +1,36 @@
+.root {
+    width: 280px;
+}
+
+.content {
+    display        : flex;
+    flex-direction : column;
+    justify-content: space-between;
+
+    .actions {
+        display       : flex;
+        flex-direction: row;
+        gap           : 1rem;
+
+        &>* {
+            flex-grow: 1;
+        }
+    }
+}
+
+.empty {
+    figcaption {
+        opacity: 0.3;
+    }
+}
+
+.boardCardContent {
+    display       : flex;
+    flex-direction: row;
+    gap           : 1rem;
+
+
+    &>* {
+        flex-grow: 1;
+    }
+}

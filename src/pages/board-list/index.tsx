@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 
 import { useBoardStore } from "../../storages/board.storage";
 import { useCreateOrUpdateBoardDialog } from "../../dialogs/use-create-or-update-board.dialog";
@@ -7,8 +8,8 @@ import { BoardCard, EmptyBoardCard } from "./components/board-card";
 import styles from "./styles.module.scss";
 
 export const BoardList = () => {
+    const navigate = useNavigate();
     const board = useBoardStore();
-
     const { dialogView, openDialog } = useCreateOrUpdateBoardDialog();
 
     const onCreateBoard = useCallback(async () => {
@@ -40,9 +41,10 @@ export const BoardList = () => {
 
                     const { name, code, description } = result.value;
                     await board.update(value.id, name, code, description)
-                }} />
+                }}
+                onView={() => navigate(`/board/${value.code}`)} />
         )
-    }, [board, onCreateBoard, openDialog]);
+    }, [board, navigate, onCreateBoard, openDialog]);
 
     return (
         <div class={styles.root}>
