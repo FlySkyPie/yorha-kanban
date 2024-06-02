@@ -28,3 +28,10 @@ export const useBoardStore = () => {
 
     return { list, add, update };
 };
+
+export const useBoard = (boardCode: string) => {
+    const board = useLiveQuery(() =>
+        db.boards.where("code").equals(boardCode).first());
+
+    return board;
+};

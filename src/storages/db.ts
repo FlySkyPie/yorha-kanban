@@ -17,6 +17,8 @@ export class DexieDatabase extends Dexie {
         super(databaseName);
         this.version(databaseVersion).stores({
             boards: "++id, code", // Primary key and indexed props
+            lists: "++id, boardId, order", // Primary key and indexed props
+            cards: "++id, boardId, listId", // Primary key and indexed props
         });
     }
 }

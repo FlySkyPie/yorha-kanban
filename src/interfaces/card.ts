@@ -11,4 +11,6 @@ export interface ICard {
      * Set to null when it's archived.
      */
     listId: number | null;
+
+    order?: number;
 }

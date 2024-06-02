@@ -5,5 +5,5 @@ export interface IList {
 
     boardId: number;
 
-    order: number;
+    order?: number;
 }
