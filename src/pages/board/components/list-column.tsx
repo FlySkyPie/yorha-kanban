@@ -1,4 +1,6 @@
 
+import { useMemo } from "preact/hooks";
+
 import styles from "./styles.module.scss";
 
 type ICreateListColumnProps = {
@@ -29,6 +31,10 @@ type IProps = {
 };
 
 export const ListColumn: React.FC<IProps> = ({ name, onEdit }) => {
+    const mockCardsView = useMemo(() => Array.from({ length: 20 }).map((_, i) =>
+        <div key={i} class={styles.card}>
+            Test Card
+        </div>), []);
 
     return (
         <figure class={styles.root}>
@@ -37,17 +43,21 @@ export const ListColumn: React.FC<IProps> = ({ name, onEdit }) => {
             </figcaption>
             <div class={styles.boardCardContent}>
                 <div class={styles.content}>
-                    <p class={styles.actions}>
-                        <button type="button" >
-                            Add a card
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onEdit}>
-                            Edit list
-                        </button>
-                    </p>
+                    <div class={styles.cardContainer}>
+                        {mockCardsView}
+
+                    </div>
                 </div>
+                <p class={styles.actions}>
+                    <button type="button" >
+                        Add a card
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onEdit}>
+                        Edit list
+                    </button>
+                </p>
             </div>
         </figure>
     );
