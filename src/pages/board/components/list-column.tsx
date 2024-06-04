@@ -1,5 +1,8 @@
+import { useCallback, useMemo } from "preact/hooks";
 
-import { useMemo } from "preact/hooks";
+import type { IList } from "../../../interfaces/list";
+import { useCardStore } from "../../../storages/card.storage";
+import { useCreateOrUpdateCardDialog } from "../../../dialogs/use-create-or-update-card.dialog";
 
 import styles from "./styles.module.scss";
 
@@ -25,16 +28,36 @@ export const CreateListColumn: React.FC<ICreateListColumnProps> = ({ onCreate })
 };
 
 type IProps = {
-    name: string;
+    value: IList;
 
     onEdit: () => void;
 };
 
-export const ListColumn: React.FC<IProps> = ({ name, onEdit }) => {
-    const mockCardsView = useMemo(() => Array.from({ length: 20 }).map((_, i) =>
-        <div key={i} class={styles.card}>
-            Test Card
-        </div>), []);
+export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onEdit }) => {
+    const crad = useCardStore(boardId, id);
+    const { dialogView: cardDialogView, openDialog: openCardDialog } = useCreateOrUpdateCardDialog();
+
+    const cardsView = useMemo(() => {
+        if (!crad.list) {
+            return null;
+        }
+
+        return crad.list.map(({ id, title }) =>
+            <div key={id} class={styles.card}>
+                {title}
+            </div>);
+    }, [crad.list]);
+
+    const handleCreate = useCallback(async () => {
+        const result = await openCardDialog();
+        if (result.type === 'close') {
+            return;
+        }
+
+        await crad.add(boardId, id, {
+            ...result.value,
+        });
+    }, [boardId, crad, id, openCardDialog]);
 
     return (
         <figure class={styles.root}>
@@ -44,12 +67,14 @@ export const ListColumn: React.FC<IProps> = ({ name, onEdit }) => {
             <div class={styles.boardCardContent}>
                 <div class={styles.content}>
                     <div class={styles.cardContainer}>
-                        {mockCardsView}
+                        {cardsView}
 
                     </div>
                 </div>
                 <p class={styles.actions}>
-                    <button type="button" >
+                    <button
+                        type="button"
+                        onClick={handleCreate}>
                         Add a card
                     </button>
                     <button
@@ -59,6 +84,7 @@ export const ListColumn: React.FC<IProps> = ({ name, onEdit }) => {
                     </button>
                 </p>
             </div>
+            {cardDialogView}
         </figure>
     );
 };

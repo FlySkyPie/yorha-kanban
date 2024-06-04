@@ -24,7 +24,7 @@ export const Board: React.FC = () => {
         return list.list.map((value) =>
             <ListColumn
                 key={value.id}
-                name={value.name}
+                value={value}
                 onEdit={async () => {
                     const result = await openEditDialog(value.name);
                     if (result.type === 'close') {
