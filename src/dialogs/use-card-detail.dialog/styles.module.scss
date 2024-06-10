@@ -1,0 +1,50 @@
+.styledModal {
+    min-width: 300px;
+    border   : 0;
+    padding  : 0;
+
+    font-family   : helvetica, sans-serif;
+    letter-spacing: 0.03rem;
+    font-weight   : lighter;
+    color         : var(--text-primary);
+
+    background-color: var(--main-bg-color);
+
+    figure {
+        background-color: var(--main-bg-color);
+    }
+}
+
+.styledModal::backdrop {
+    position       : fixed;
+    top            : 0;
+    left           : 0;
+    right          : 0;
+    bottom         : 0;
+    backdrop-filter: blur(4px);
+}
+
+.container {
+    display       : flex;
+    flex-direction: row;
+    gap           : 1rem;
+
+    flex-grow: 1;
+}
+
+.sideBar {
+    display       : flex;
+    flex-direction: column;
+
+    flex-basis: 200px;
+    gap       : 1rem;
+}
+
+.content {
+    flex-grow: 1;
+}
+
+.root {
+    min-width : 768px;
+    min-height: 400px;
+}

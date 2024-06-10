@@ -5,6 +5,7 @@ import { useCardStore } from "../../../storages/card.storage";
 import { useCreateOrUpdateCardDialog } from "../../../dialogs/use-create-or-update-card.dialog";
 
 import styles from "./styles.module.scss";
+import { useCardDetailDialog } from "../../../dialogs/use-card-detail.dialog";
 
 type ICreateListColumnProps = {
     onCreate: () => void;
@@ -34,19 +35,40 @@ type IProps = {
 };
 
 export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onEdit }) => {
-    const crad = useCardStore(boardId, id);
+    const cradStore = useCardStore(boardId, id);
     const { dialogView: cardDialogView, openDialog: openCardDialog } = useCreateOrUpdateCardDialog();
+    const { dialogView: cardDetailView, openDialog: openCardDetail } = useCardDetailDialog();
 
     const cardsView = useMemo(() => {
-        if (!crad.list) {
+        if (!cradStore.list) {
             return null;
         }
 
-        return crad.list.map(({ id, title }) =>
-            <div key={id} class={styles.card}>
-                {title}
-            </div>);
-    }, [crad.list]);
+        return cradStore.list.map((cardValue) => {
+            const { id, title } = cardValue;
+            return (
+                <div
+                    key={id}
+                    class={styles.card}
+                    onClick={async () => {
+                        const result1 = await openCardDetail(cardValue);
+                        if (result1.type === 'close') {
+                            return;
+                        }
+                        const result2 = await openCardDialog(cardValue);
+                        if (result2.type === 'close') {
+                            return;
+                        }
+
+                        await cradStore.update(id, {
+                            ...cardValue,
+                            ...result2.value,
+                        });
+                    }}>
+                    {title}
+                </div>)
+        });
+    }, [cradStore, openCardDetail, openCardDialog]);
 
     const handleCreate = useCallback(async () => {
         const result = await openCardDialog();
@@ -54,10 +76,10 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
             return;
         }
 
-        await crad.add(boardId, id, {
+        await cradStore.add(boardId, id, {
             ...result.value,
         });
-    }, [boardId, crad, id, openCardDialog]);
+    }, [boardId, cradStore, id, openCardDialog]);
 
     return (
         <figure class={styles.root}>
@@ -85,6 +107,7 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
                 </p>
             </div>
             {cardDialogView}
+            {cardDetailView}
         </figure>
     );
 };
