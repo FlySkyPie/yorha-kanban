@@ -16,6 +16,8 @@
     "marked-react": "^2.0.0",
     "nanoid": "^5.0.7",
     "preact": "^10.22.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {

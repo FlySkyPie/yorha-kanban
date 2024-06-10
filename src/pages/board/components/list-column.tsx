@@ -1,11 +1,15 @@
 import { useCallback, useMemo } from "preact/hooks";
+import { useDrop } from "react-dnd";
 
 import type { IList } from "../../../interfaces/list";
+import type { ICollectedProps, IDragItem, IDropItem } from "../../../interfaces/dnd";
+import { ItemTypes } from "../../../constants";
 import { useCardStore } from "../../../storages/card.storage";
 import { useCreateOrUpdateCardDialog } from "../../../dialogs/use-create-or-update-card.dialog";
-
-import styles from "./styles.module.scss";
 import { useCardDetailDialog } from "../../../dialogs/use-card-detail.dialog";
+
+import { Card } from "./card";
+import styles from "./styles.module.scss";
 
 type ICreateListColumnProps = {
     onCreate: () => void;
@@ -39,6 +43,15 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
     const { dialogView: cardDialogView, openDialog: openCardDialog } = useCreateOrUpdateCardDialog();
     const { dialogView: cardDetailView, openDialog: openCardDetail } = useCardDetailDialog();
 
+    const [{ isOver, canDrop }, dropRef] = useDrop<IDragItem, IDropItem, ICollectedProps>({
+        accept: ItemTypes.BOX,
+        drop: () => ({ listId: id }),
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+        }),
+    });
+
     const cardsView = useMemo(() => {
         if (!cradStore.list) {
             return null;
@@ -47,9 +60,9 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
         return cradStore.list.map((cardValue) => {
             const { id, title } = cardValue;
             return (
-                <div
+                <Card
                     key={id}
-                    class={styles.card}
+                    title={title}
                     onClick={async () => {
                         const result1 = await openCardDetail(cardValue);
                         if (result1.type === 'close') {
@@ -64,9 +77,12 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
                             ...cardValue,
                             ...result2.value,
                         });
-                    }}>
-                    {title}
-                </div>)
+                    }}
+                    onMove={async (listId) => {
+                        await cradStore.move(id, listId);
+                    }}
+                />
+            );
         });
     }, [cradStore, openCardDetail, openCardDialog]);
 
@@ -82,7 +98,9 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
     }, [boardId, cradStore, id, openCardDialog]);
 
     return (
-        <figure class={styles.root}>
+        <figure
+            ref={dropRef}
+            class={styles.root}>
             <figcaption>
                 {name}
             </figcaption>
@@ -90,7 +108,8 @@ export const ListColumn: React.FC<IProps> = ({ value: { boardId, id, name }, onE
                 <div class={styles.content}>
                     <div class={styles.cardContainer}>
                         {cardsView}
-
+                        {isOver && canDrop &&
+                            <div class={styles.emptyCard} />}
                     </div>
                 </div>
                 <p class={styles.actions}>

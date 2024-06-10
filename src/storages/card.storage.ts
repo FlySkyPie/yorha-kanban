@@ -7,7 +7,18 @@ import { db } from "./db";
 
 type IValue = Pick<ICard, 'title' | 'content'>;
 
-export const useCardStore = (boardId: number, listId: number) => {
+interface ICardStore {
+    list: ICard[] | undefined;
+    add: (boardId: number, listId: number, card: IValue) => Promise<void>;
+
+    update: (id: number, card: ICard) => Promise<void>;
+
+    remove: (id: number) => Promise<void>;
+
+    move: (cardId: number, listId: number) => Promise<void>;
+}
+
+export const useCardStore = (boardId: number, listId: number): ICardStore => {
     const list = useLiveQuery(() =>
         db.cards
             .where({ boardId, listId })
@@ -30,9 +41,15 @@ export const useCardStore = (boardId: number, listId: number) => {
         });
     }, []);
 
+    const move = useCallback(async (cardId: number, listId: number) => {
+        await db.cards.update(cardId, {
+            listId,
+        });
+    }, []);
+
     const remove = useCallback(async (id: number,) => {
         await db.cards.delete(id);
     }, []);
 
-    return { list, add, update, remove };
+    return { list, add, update, remove, move };
 };
